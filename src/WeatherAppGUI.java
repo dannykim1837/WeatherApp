@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+
+
 public class WeatherAppGUI extends javax.swing.JFrame {
     public WeatherAppGUI() {
         super("Weather App");
@@ -14,7 +16,9 @@ public class WeatherAppGUI extends javax.swing.JFrame {
             setLayout(null);
             setResizable(false);
             addGuiComponents();
+
     }
+
 
     private void addGuiComponents() {
         JTextField searchTextField = new JTextField();
@@ -28,6 +32,32 @@ public class WeatherAppGUI extends javax.swing.JFrame {
         searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.setBounds(375, 13, 47, 45);
         add(searchButton);
+
+        JLabel weatherConditionImage = new JLabel(loadImage("src/img/cloud.png"));
+        weatherConditionImage.setBounds(0, 20, 450,300);
+        add(weatherConditionImage);
+
+        JLabel temperatureText = new JLabel("10 C");
+        temperatureText.setFont(new Font("Dialog", Font.PLAIN, 35));
+        temperatureText.setBounds(0, 230, 450, 45);
+        temperatureText.setHorizontalAlignment(SwingConstants.CENTER);
+        add(temperatureText);
+
+        JLabel conditionDescriptionText = new JLabel("Cloudy");
+        conditionDescriptionText.setFont(new Font("Dialog", Font.PLAIN, 35));
+        conditionDescriptionText.setBounds(0, 300, 450, 45);
+        conditionDescriptionText.setHorizontalAlignment(SwingConstants.CENTER);
+        add(conditionDescriptionText);
+
+        JLabel TodayText = new JLabel("Today");
+        TodayText.setFont(new Font("Dialog", Font.PLAIN, 20));
+        TodayText.setBounds(10, 400, 450, 45);
+        TodayText.setHorizontalAlignment(SwingConstants.LEFT);
+        add(TodayText);
+
+
+        JLabel humidityImage = new JLabel(loadImage("src/img/humidity.png"));
+
     }
 
     private ImageIcon loadImage(String resourcePath) {
@@ -38,6 +68,7 @@ public class WeatherAppGUI extends javax.swing.JFrame {
         }catch(IOException e){
             e.printStackTrace();
         }
+
 
 
         System.out.println("Could not found resource: ");
