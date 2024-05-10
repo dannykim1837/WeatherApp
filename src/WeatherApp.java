@@ -21,7 +21,7 @@ public class WeatherApp {
         double longitude = (double) location.get("longitude");
         String urlString = "https://api.open-meteo.com/v1/gfs?" +
                 "latitude=" + latitude + "&longitude=" + longitude +
-                "&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=America%2FDenver";
+                "&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max&timezone=America%2FDenver";
 
         try{
             HttpURLConnection conn = fetchApiResponse(urlString);
@@ -48,6 +48,7 @@ public class WeatherApp {
 
             JSONArray temperatureData = (JSONArray) hourly.get("temperature_2m");
             double temperature = (double) temperatureData.get(index);
+
             JSONArray weathercode = (JSONArray) hourly.get("weather_code");
             String weatherCondition = convertWeatherCode((long) weathercode.get(index));
 
@@ -57,11 +58,24 @@ public class WeatherApp {
             JSONArray windspeedData =  (JSONArray) hourly.get("wind_speed_10m");
             double windspeed = (double) windspeedData.get(index);
 
+            JSONObject daily = (JSONObject) resultJsonObj.get("daily");
+            JSONArray time_d = (JSONArray) daily.get("time");
+            int index_d = findIndexOfNextDay(time_d);
+// forecast data
+            JSONArray weathercode_d = (JSONArray) daily.get("weather_code");
+            String weatherCondition_d = convertWeatherCode_d((long) weathercode_d.get(index_d));
+
+            JSONArray temperatureMaxData = (JSONArray) daily.get("temperature_2m_max");
+            double nextDayMaxTemp = (double) temperatureMaxData.get(index_d);
+
             JSONObject weatherData = new JSONObject();
             weatherData.put("temperature", temperature);
             weatherData.put("weather_condition", weatherCondition);
             weatherData.put("humidity", humidity);
             weatherData.put("windspeed", windspeed);
+//            daily  weather data
+            weatherData.put("nextday_weather_condition", weatherCondition_d);
+            weatherData.put("next_day_max_temperature", nextDayMaxTemp);
             return weatherData;
 
 
@@ -69,6 +83,8 @@ public class WeatherApp {
             e.printStackTrace();
         }
         return null;
+
+
     }
 
     public static JSONArray getLocationData(String locationName){
@@ -125,6 +141,16 @@ public class WeatherApp {
         }
         return 0;
     }
+    private static int findIndexOfNextDay(JSONArray timelist) {
+        String nextDay = getNextDay();
+        for (int i = 0; i < timelist.size(); i++) {
+            String time = (String) timelist.get(i);
+            if (time.equals(nextDay)) {
+                return i;
+            }
+        }
+        return 0;
+    }
     public static String getCurrentTime(){
         LocalDateTime currentDatetime = LocalDateTime.now();
 
@@ -132,6 +158,13 @@ public class WeatherApp {
         String formattedDateTime = currentDatetime.format(formatter);
         return formattedDateTime;
     }
+
+    public static String getNextDay() {
+        LocalDateTime nextDayDatetime = LocalDateTime.now().plusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return nextDayDatetime.format(formatter);
+    }
+
     private static String convertWeatherCode(long weathercode){
         String weatherCondition = "";
         if(weathercode == 0L){
@@ -139,12 +172,25 @@ public class WeatherApp {
         }else if(weathercode > 0L && weathercode <= 3L){
             weatherCondition = "Cloudy";
         }else if((weathercode >= 51L && weathercode <= 67L)
-                    || (weathercode >= 80L && weathercode <= 99L)){
-
+                || (weathercode >= 80L && weathercode <= 99L)){
             weatherCondition = "Rain";
         }else if(weathercode >= 71L && weathercode <= 77L){
             weatherCondition = "Snow";
         }
         return weatherCondition;
+    }
+
+    private static String convertWeatherCode_d(long weathercode_d) {
+        if (weathercode_d == 0L) {
+            return "Clear";
+        } else if (weathercode_d > 0L && weathercode_d <= 3L) {
+            return "Cloudy";
+        } else if ((weathercode_d >= 51L && weathercode_d <= 67L)
+                || (weathercode_d >= 80L && weathercode_d <= 99L)) {
+            return "Rain";
+        } else if (weathercode_d >= 71L && weathercode_d <= 77L) {
+            return "Snow";
+        }
+        return "Unknown";
     }
 }

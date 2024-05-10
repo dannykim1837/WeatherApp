@@ -13,36 +13,58 @@ import java.io.IOException;
 
 public class WeatherAppGUI extends javax.swing.JFrame {
     private JSONObject weatherData;
+    private JScrollPane scrollPane;
 
     public WeatherAppGUI() {
-        super("Weather App");
+            super("Weather App");
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-            setSize(450, 650);
+            setSize(450, 700);
             setLocationRelativeTo(null);
-            setLayout(null);
             setResizable(false);
-            addGuiComponents();
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(null);
+            mainPanel.setPreferredSize(new Dimension(450, 700));
+            addGuiComponents(mainPanel);
+            scrollPane = new JScrollPane(mainPanel);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            setContentPane(scrollPane);
 
+
+            ImageIcon image = new ImageIcon("src/img/logo.png");
+            super.setIconImage(image.getImage());
     }
 
 
-    private void addGuiComponents() {
-        JLabel background = new JLabel(loadImage("src/img/bg.png"));
-        background.setBounds(0, 0, 450, 650);
-        add(background);
+    private void addGuiComponents(JPanel panel) {
+        JLabel background = new JLabel(loadImage("src/img/sunnyb.png"));
+        background.setBounds(0, 0, 450, 700);
+        panel.add(background);
+        panel.setComponentZOrder(background, panel.getComponentCount() - 1);
+
+        JLabel widgetBackground = new JLabel();
+        widgetBackground.setBounds(30, 580, 370, 90);
+        widgetBackground.setLayout(null);
+        widgetBackground.setOpaque(false);
+        widgetBackground.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 150), 3));
+        panel.add(widgetBackground);
+        panel.setComponentZOrder(widgetBackground, panel.getComponentCount() - 2);
+
+
 
         JTextField searchTextField = new JTextField();
 
         //can change Font size, style
-        searchTextField.setBounds(15, 15, 351, 45);
+        searchTextField.setBounds(20, 15, 351, 45);
         searchTextField.setFont(new Font("Dialog", Font.PLAIN, 24));
+        searchTextField.setOpaque(false);
         background.add(searchTextField);
 
-        JLabel weatherConditionImage = new JLabel(loadImage("src/img/cloud.png"));
+        JLabel weatherConditionImage = new JLabel(loadImage("src/img/sunny.png"));
         weatherConditionImage.setBounds(0, 125, 450,217);
         background.add(weatherConditionImage);
 
-        JLabel temperatureText = new JLabel("25 C°");
+        JLabel temperatureText = new JLabel("25 °C");
         temperatureText.setFont(new Font("Dialog", Font.PLAIN, 48));
         temperatureText.setBounds(0, 350, 450, 54);
         temperatureText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -73,6 +95,22 @@ public class WeatherAppGUI extends javax.swing.JFrame {
         windspeedText.setBounds(310, 500, 95, 80);
         background.add(windspeedText);
 
+        JLabel nextdayImage = new JLabel(loadImage("src/img/sun1.png"));
+        nextdayImage.setBounds(200, 600, 50, 50);
+        background.add(nextdayImage);
+
+        JLabel nextdayText = new JLabel("<html><b>Nextday Max</b>");
+        nextdayText.setFont(new Font("Dialog", Font.PLAIN, 16));
+        nextdayText.setBounds(90, 600, 80, 50);
+        background.add(nextdayText);
+
+        JLabel nextdaytemperatureText = new JLabel("<html><b>" + 21 + "°C");
+        nextdaytemperatureText.setFont(new Font("Dialog", Font.PLAIN, 16));
+        nextdaytemperatureText.setBounds(300, 600, 55, 50);
+        background.add(nextdaytemperatureText);
+
+
+
         JButton searchButton = new JButton(loadImage("src/img/search.png"));
         searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.setBounds(375, 13, 47, 45);
@@ -88,22 +126,26 @@ public class WeatherAppGUI extends javax.swing.JFrame {
                 weatherData = WeatherApp.getWeatherData(userInput);
                 String weatherCondition = (String) weatherData.get("weather_condition");
                 switch(weatherCondition) {
-                    case "Clear":
+                    case "Sunny":
+                        background.setIcon(loadImage("src/img/sunnyb.png"));
                         weatherConditionImage.setIcon(loadImage("src/img/sunny.png"));
                         break;
                     case "Cloudy":
+                        background.setIcon(loadImage("src/img/cloudb.png"));
                         weatherConditionImage.setIcon(loadImage("src/img/cloud.png"));
                         break;
                     case "Rain":
+                        background.setIcon(loadImage("src/img/rainb.png"));
                         weatherConditionImage.setIcon(loadImage("src/img/rain.png"));
                         break;
                     case "Snow":
+                        background.setIcon(loadImage("src/img/snowb.png"));
                         weatherConditionImage.setIcon(loadImage("src/img/snow.png"));
                         break;
                 }
 //              data update
                 double temperature = (Double) weatherData.get("temperature");
-                temperatureText.setText(temperature + " C°");
+                temperatureText.setText(temperature + " °C");
 
                 conditionDescriptionText.setText(weatherCondition);
 
@@ -113,7 +155,23 @@ public class WeatherAppGUI extends javax.swing.JFrame {
                 double windspeed = (Long) weatherData.get("humidity");
                 windspeedText.setText("<html><b>Windspeed</b> "+ windspeed +" km/h</html>");
 
-
+                String nextDayWeatherCondition = (String) weatherData.get("weather_condition");
+                switch (nextDayWeatherCondition) {
+                    case "Sunny":
+                        nextdayImage.setIcon(loadImage("src/img/sun1.png"));
+                        break;
+                    case "Cloudy":
+                        nextdayImage.setIcon(loadImage("src/img/cloud1.png"));
+                        break;
+                    case "Rain":
+                        nextdayImage.setIcon(loadImage("src/img/rain1.png"));
+                        break;
+                    case "Snow":
+                        nextdayImage.setIcon(loadImage("src/img/snow1.png"));
+                        break;
+                }
+                double nextDayMaxTemp = (Double) weatherData.get("next_day_max_temperature");
+                nextdaytemperatureText.setText("<html><b>" + nextDayMaxTemp + "°C</html>");
             }
         });
         background.add(searchButton);
@@ -133,5 +191,20 @@ public class WeatherAppGUI extends javax.swing.JFrame {
 
         System.out.println("Could not found resource: ");
         return null;
+    }
+
+    public void scrollDown() {
+        if (scrollPane != null) {
+            JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+            verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            WeatherAppGUI app = new WeatherAppGUI();
+            app.setVisible(true);
+            app.scrollDown();
+        });
     }
 }
