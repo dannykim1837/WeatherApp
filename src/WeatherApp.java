@@ -168,7 +168,7 @@ public class WeatherApp {
     private static String convertWeatherCode(long weathercode){
         String weatherCondition = "";
         if(weathercode == 0L){
-            weatherCondition = "Clear";
+            weatherCondition = "Sunny";
         }else if(weathercode > 0L && weathercode <= 3L){
             weatherCondition = "Cloudy";
         }else if((weathercode >= 51L && weathercode <= 67L)
@@ -182,7 +182,7 @@ public class WeatherApp {
 
     private static String convertWeatherCode_d(long weathercode_d) {
         if (weathercode_d == 0L) {
-            return "Clear";
+            return "Sunny";
         } else if (weathercode_d > 0L && weathercode_d <= 3L) {
             return "Cloudy";
         } else if ((weathercode_d >= 51L && weathercode_d <= 67L)
