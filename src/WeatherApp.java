@@ -19,7 +19,7 @@ public class WeatherApp {
         JSONObject location = (JSONObject) locationData.get(0);
         double latitude = (double) location.get("latitude");
         double longitude = (double) location.get("longitude");
-        String urlString = "https://api.open-meteo.com/v1/gfs?" +
+        String urlString = "https://api.open-meteo.com/v1/forecast?" +
                 "latitude=" + latitude + "&longitude=" + longitude +
                 "&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max&timezone=America%2FDenver";
 
@@ -56,7 +56,9 @@ public class WeatherApp {
             long humidity = (long) relativeHumidity.get(index);
 
             JSONArray windspeedData =  (JSONArray) hourly.get("wind_speed_10m");
-            double windspeed = (double) windspeedData.get(index);
+            double windspeedKmh = (double) windspeedData.get(index);
+            double windspeedMs = Math.ceil(windspeedKmh / 3.6);
+
 
             JSONObject daily = (JSONObject) resultJsonObj.get("daily");
             JSONArray time_d = (JSONArray) daily.get("time");
@@ -72,7 +74,7 @@ public class WeatherApp {
             weatherData.put("temperature", temperature);
             weatherData.put("weather_condition", weatherCondition);
             weatherData.put("humidity", humidity);
-            weatherData.put("windspeed", windspeed);
+            weatherData.put("windspeed", windspeedMs);
 //            daily  weather data
             weatherData.put("nextday_weather_condition", weatherCondition_d);
             weatherData.put("next_day_max_temperature", nextDayMaxTemp);

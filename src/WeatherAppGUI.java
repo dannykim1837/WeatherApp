@@ -90,7 +90,7 @@ public class WeatherAppGUI extends javax.swing.JFrame {
         windspeedImage.setBounds(220, 500, 74, 66);
         background.add(windspeedImage);
 
-        JLabel windspeedText = new JLabel("<html><b>Windspeed</b> 15km/h<html>");
+        JLabel windspeedText = new JLabel("<html><b>windspeed</b> 5.2m/s<html>");
         windspeedText.setFont(new Font("Dialog", Font.PLAIN, 16));
         windspeedText.setBounds(310, 500, 95, 80);
         background.add(windspeedText);
@@ -152,8 +152,8 @@ public class WeatherAppGUI extends javax.swing.JFrame {
                 long humidity = (Long) weatherData.get("humidity");
                 HumidityText.setText("<html><b>Humidity</b> "+ humidity +" %</html>");
 
-                double windspeed = (Long) weatherData.get("humidity");
-                windspeedText.setText("<html><b>Windspeed</b> "+ windspeed +" km/h</html>");
+                double windspeed = (double) weatherData.get("windspeed");
+                windspeedText.setText("<html><b>Windspeed</b> "+ windspeed +" m/s</html>");
 
                 String nextDayWeatherCondition = (String) weatherData.get("weather_condition");
                 switch (nextDayWeatherCondition) {
