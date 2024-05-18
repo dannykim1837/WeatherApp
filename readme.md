@@ -1,6 +1,6 @@
 ## Overview
 
-**Project Title**: Weather Forcast
+**Project Title**: Weather Forecast
 
 **Project Description**: This project contains a simple Java program named Weather Forecast, which uses an open API to update data every hour and refreshes the weather information daily, allowing users to know the weather when they search for a place they want.
 
